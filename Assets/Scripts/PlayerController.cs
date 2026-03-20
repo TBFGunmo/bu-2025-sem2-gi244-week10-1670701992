@@ -20,6 +20,13 @@ public class PlayerController : MonoBehaviour
 
     public bool gameOver = false;
 
+    private int maxAirJump = 1;
+    private int currentAirJump = 0;
+
+    private InputAction DashAction;
+    public bool isDash = false;
+
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -33,6 +40,7 @@ public class PlayerController : MonoBehaviour
         Physics.gravity *= gravityModifier;
 
         jumpAction = InputSystem.actions.FindAction("Jump");
+        DashAction = InputSystem.actions.FindAction("Dash");
 
         gameOver = false;
     }
@@ -48,6 +56,26 @@ public class PlayerController : MonoBehaviour
             dirtParticle.Stop();
             playerAudio.PlayOneShot(jumpSfx);
         }
+        else if (jumpAction.triggered && currentAirJump < maxAirJump) 
+        {
+            rb.AddForce(jumpForce * Vector3.up, ForceMode.Impulse);
+            playerAnim.SetTrigger("Jump_trig");
+            dirtParticle.Stop();
+            playerAudio.PlayOneShot(jumpSfx);
+
+            currentAirJump++;
+        }
+
+        if (DashAction.IsPressed())
+        {
+            isDash = true;
+        }
+        else 
+        {
+            isDash = false;
+        }
+
+
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -55,6 +83,8 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true;
+            currentAirJump = 0;
+
             dirtParticle.Play();
         }
         else if (collision.gameObject.CompareTag("Obstacle"))
