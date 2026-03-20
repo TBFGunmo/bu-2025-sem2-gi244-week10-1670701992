@@ -52,7 +52,12 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (jumpAction.triggered && isOnGround && !gameOver)
+        if (gameOver) 
+        {
+            return;
+        }
+
+        if (jumpAction.triggered && isOnGround)
         {
             rb.AddForce(jumpForce * Vector3.up, ForceMode.Impulse);
             isOnGround = false;

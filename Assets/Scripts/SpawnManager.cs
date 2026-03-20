@@ -19,13 +19,36 @@ public class SpawnManager : MonoBehaviour
 
         InvokeRepeating(nameof(SpawnObstacle), startDelay, repeatRate);
 
-        GameObject.Find("Player").GetComponent<PlayerController>();
+
+        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
     }
 
     void SpawnObstacle()
     {
-        int RandomObstacle = Random.Range(0, obstaclePrefabs.Length);
+        if (playerController.gameOver) 
+        {
+            return;
+        }
 
-        Instantiate(obstaclePrefabs[RandomObstacle], spawnPos, obstaclePrefab.transform.rotation);
+        if (obstaclePrefabs.Length > 0) // check if array is empty
+        {
+            int RandomObstacle = Random.Range(0, obstaclePrefabs.Length);
+
+            if (obstaclePrefabs[RandomObstacle]) // check index isn't empty
+            {
+                Instantiate(obstaclePrefabs[RandomObstacle], spawnPos, obstaclePrefabs[RandomObstacle].transform.rotation);
+            }
+            else 
+            {
+                Debug.Log("obstaclePrefabs Index " + RandomObstacle + " is empty");
+            }
+        }
+        else 
+        {
+            Debug.Log("obstaclePrefabs is empty");
+        }
+
+        
+        
     }
 }
