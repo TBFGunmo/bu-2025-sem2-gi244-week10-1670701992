@@ -26,6 +26,10 @@ public class PlayerController : MonoBehaviour
     private InputAction DashAction;
     public bool isDash = false;
 
+    public GameObject efxObstacle;
+    public int playerHp = 10;
+
+
 
     void Awake()
     {
@@ -89,13 +93,26 @@ public class PlayerController : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Obstacle"))
         {
-            Debug.Log("Game Over!");
-            gameOver = true;
-            playerAnim.SetBool("Death_b", true);
-            playerAnim.SetInteger("DeathType_int", 1);
-            explosionParticle.Play();
-            dirtParticle.Stop();
+            playerHp -= 1;
+
+            
+            GameObject efxHit = Instantiate(efxObstacle, transform.position, Quaternion.identity);  //deleted FX_Explosion_Smoke from plyer and then will add from here #play on awake
+            Destroy(efxHit, 0.5f);
+
             playerAudio.PlayOneShot(crashSfx);
+            Destroy(collision.gameObject);
+
+            if (playerHp <= 0)
+            {
+                Debug.Log("Game Over!");
+                gameOver = true;
+                playerAnim.SetBool("Death_b", true);
+                playerAnim.SetInteger("DeathType_int", 1);
+                dirtParticle.Stop();
+            }
+            
+
+
         }
     }
 
